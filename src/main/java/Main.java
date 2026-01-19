@@ -1,6 +1,8 @@
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Main {
     public static void main(String[] args) {
@@ -17,8 +19,21 @@ public class Main {
             BufferedReader reader =
                     new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
+            Map<String, String> headers = new HashMap<>();
+            String requestLine = reader.readLine();
+            String line;
+
+            while ((line = reader.readLine())!=null && !line.isEmpty()){
+                int divIndex = line.indexOf(":");
+                if (divIndex>0){
+                    String headerName = line.substring(0, divIndex);
+                    String value = line.substring(divIndex+1);
+                    headers.put(headerName, value);
+                }
+            }
+
             Parser parser = new Parser();
-            String response = parser.parser(reader.readLine());;
+            String response = parser.parser(requestLine, headers);
             OutputStream out = socket.getOutputStream();
             out.write(response.getBytes());
             out.flush();
