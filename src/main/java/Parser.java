@@ -14,7 +14,7 @@ public class Parser {
         if (splitReqLine[1].startsWith("/echo")) {
             String[] string1 = splitReqLine[1].split("/", 0);
             return "HTTP/1.1 200 OK\r\n" +
-                    "Content-Type: text/plain\r\n" +
+                    "Content-Type: " + "text/plain\r\n" +
                     "Content-Length: " + string1[2].length() + "\r\n\r\n"
                     + string1[2];
 
