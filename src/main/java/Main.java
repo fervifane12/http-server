@@ -26,7 +26,7 @@ public class Main {
             while ((line = reader.readLine())!=null && !line.isEmpty()){
                 int divIndex = line.indexOf(":");
                 if (divIndex>0){
-                    String headerName = line.substring(0, divIndex);
+                    String headerName = line.substring(0, divIndex).toLowerCase();
                     String value = line.substring(divIndex+1);
                     headers.put(headerName, value);
                 }

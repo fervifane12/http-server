@@ -13,19 +13,24 @@ public class Parser {
         if (splitReqLine[1].startsWith("/echo")) {
             String[] string1 = splitReqLine[1].split("/", 0);
             return "HTTP/1.1 200 OK\r\n" +
-                    "Content-Type: text/plain\n" +
-                    "Content-Length: " + string1[2].trim().length() + "\r\n\r\n"
-                    + string1[2].trim();
+                    "Content-Type: text/plain\r\n" +
+                    "Content-Length: " + string1[2].length() + "\r\n\r\n"
+                    + string1[2];
+        }
 
-        } else if (splitReqLine[1].startsWith("/user-agent")) {
+        else if (splitReqLine[1].startsWith("/user-agent")) {
+            String userAgentValue = headers.get("user-agent");
             return "HTTP/1.1 200 OK\r\n" +
-                    "Content-Type: text/plain\n" +
-                    "Content-Length: " + headers.get("User-Agent").length() + "\r\n\r\n" +
-                    headers.get("User-Agent");
-        } else if (splitReqLine[1].equals("/")) {
-            return "HTTP/1.1 200 OK\r\n\r\n";
+                    "Content-Type: text/plain\r\n" +
+                    "Content-Length: " + userAgentValue.length() + "\r\n\r\n" +
+                    userAgentValue;
+        }
 
-        } else {
+        else if (splitReqLine[1].equals("/")) {
+            return "HTTP/1.1 200 OK\r\n\r\n";
+        }
+
+        else {
             return "HTTP/1.1 404 Not Found\r\n\r\n";
         }
     }
