@@ -9,14 +9,13 @@ public class Parser {
 
     public String parser(String requestLine, Map<String, String> headers) {
         String[] splitReqLine = requestLine.split(" ", 0);
-        System.out.println(Arrays.toString(splitReqLine));
 
         if (splitReqLine[1].startsWith("/echo")) {
             String[] string1 = splitReqLine[1].split("/", 0);
             return "HTTP/1.1 200 OK\r\n" +
-                    "Content-Type: " + "text/plain\r\n" +
-                    "Content-Length: " + string1[2].length() + "\r\n\r\n"
-                    + string1[2];
+                    "Content-Type: text/plain\n" +
+                    "Content-Length: " + string1[2].trim().length() + "\r\n\r\n"
+                    + string1[2].trim();
 
         } else if (splitReqLine[1].startsWith("/user-agent")) {
             return "HTTP/1.1 200 OK\r\n" +
