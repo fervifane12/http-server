@@ -19,7 +19,7 @@ public class Parser {
         }
 
         else if (splitReqLine[1].startsWith("/user-agent")) {
-            String userAgentValue = headers.get("user-agent");
+            String userAgentValue = headers.get("user-agent").trim();
             return "HTTP/1.1 200 OK\r\n" +
                     "Content-Type: text/plain\r\n" +
                     "Content-Length: " + userAgentValue.length() + "\r\n\r\n" +
