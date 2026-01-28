@@ -12,39 +12,38 @@ public class Handler implements Runnable{
     }
 
     @Override
-    public void run() throws RuntimeException {
-        Request request = parser.parseRequest(clientSocket);
-        ResponseBuilder responseBuilder = new ResponseBuilder();
-        try (OutputStream out = clientSocket.getOutputStream()) {
+    public void run() {
+
+        try (OutputStream out = clientSocket.getOutputStream();
+            Socket socket = clientSocket) {
+
+            Request request = parser.parseRequest(clientSocket);
+            ResponseBuilder responseBuilder = new ResponseBuilder();
+            Response response;
+
             if (request.path().startsWith("/echo")) {
-                Response response = responseBuilder.withStatus("200", "OK")
+                response = responseBuilder.withStatus("200", "OK")
                         .withHeaders("Content-Type", "text/plain")
                         .withHeaders("Content-Length", String.valueOf(request.path().split("/")[1].length()))
                         .withBody(request.path().split("/")[1])
                         .buildResponse();
-                out.write(response.toString().getBytes());
-                out.flush();
             } else if (request.path().startsWith("/user-agent")) {
                 String userAgentValue = request.getHeader("user-agent").trim();
-                Response response = responseBuilder.withStatus("200", "OK")
+                response = responseBuilder.withStatus("200", "OK")
                         .withHeaders("Content-Type", "text/plain")
                         .withHeaders("Content-Length", String.valueOf(userAgentValue.length()))
                         .withBody(userAgentValue)
                         .buildResponse();
-                out.write(response.toString().getBytes());
-                out.flush();
             } else if (request.path().equals("/")) {
-                Response response = responseBuilder.withStatus("200", "OK")
+                response = responseBuilder.withStatus("200", "OK")
                         .buildResponse();
-                out.write(response.toString().getBytes());
-                out.flush();
             } else {
-                Response response = responseBuilder.withStatus("404", "Not Found")
+                response = responseBuilder.withStatus("404", "Not Found")
                         .buildResponse();
+
                 out.write(response.toString().getBytes());
                 out.flush();
             }
-            clientSocket.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
