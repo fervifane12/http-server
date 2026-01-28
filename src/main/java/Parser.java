@@ -1,5 +1,10 @@
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.net.Socket;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 
 public class Parser {
@@ -7,31 +12,50 @@ public class Parser {
     public Parser() {
     }
 
-    public String parser(String requestLine, Map<String, String> headers) {
-        String[] splitReqLine = requestLine.split(" ", 0);
+    public Request parseRequest(Socket clientSocket) {
+        try(BufferedReader reader =
+                    new BufferedReader(new InputStreamReader(clientSocket.getInputStream()))) {
+            String[] splitRequest = extractSplittedString(reader);
+            String[] requestLine = splitRequest[0].split(" ");
+            Map<String, String> headers = extractHeaders(splitRequest);
+            String httpMethod = requestLine[0];
+            String path= requestLine[1];
+            String httpVersion = requestLine[2];
 
-        if (splitReqLine[1].startsWith("/echo")) {
-            String[] string1 = splitReqLine[1].split("/", 0);
-            return "HTTP/1.1 200 OK\r\n" +
-                    "Content-Type: text/plain\r\n" +
-                    "Content-Length: " + string1[2].length() + "\r\n\r\n"
-                    + string1[2];
-        }
+            return new Request(httpMethod,
+                    path,
+                    httpVersion,
+                    headers);
 
-        else if (splitReqLine[1].startsWith("/user-agent")) {
-            String userAgentValue = headers.get("user-agent").trim();
-            return "HTTP/1.1 200 OK\r\n" +
-                    "Content-Type: text/plain\r\n" +
-                    "Content-Length: " + userAgentValue.length() + "\r\n\r\n" +
-                    userAgentValue;
-        }
-
-        else if (splitReqLine[1].equals("/")) {
-            return "HTTP/1.1 200 OK\r\n\r\n";
-        }
-
-        else {
-            return "HTTP/1.1 404 Not Found\r\n\r\n";
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
+
+    public String[] extractSplittedString(BufferedReader reader) throws IOException {
+        StringBuilder requestString = new StringBuilder();
+        String line;
+        while ((line = reader.readLine())!=null && !line.isEmpty()){
+            requestString.append(line).append("\r\n");
+        }
+
+        return requestString.toString().split("\\r\\n");
+    }
+
+    public Map<String, String> extractHeaders(String[] splitRequest){
+        Map<String, String> headers = new HashMap<>();
+        for (int i = 0; i<splitRequest.length; i++){
+            if (i>0 && !splitRequest[i].isEmpty()){
+                int divIndex = splitRequest[i].indexOf(":");
+                if (divIndex>0){
+                    String headerName = splitRequest[i].substring(0, divIndex).toLowerCase();
+                    String value = splitRequest[i].substring(divIndex + 1);
+                    headers.put(headerName, value);
+                }
+            }
+        }
+        return headers;
+    }
+
+
 }
