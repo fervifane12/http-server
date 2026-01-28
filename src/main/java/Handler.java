@@ -32,7 +32,7 @@ public class Handler implements Runnable{
                 String userAgentValue = request.getHeader("user-agent").trim();
                 response = responseBuilder.withStatus("200", "OK")
                         .withHeaders("Content-Type", "text/plain")
-                        .withHeaders("Content-Length", String.valueOf(userAgentValue.getBytes(StandardCharsets.UTF_8).length))
+                        .withHeaders("Content-Length", String.valueOf(userAgentValue.length()))
                         .withBody(userAgentValue)
                         .buildResponse();
             } else if (request.path().equals("/")) {
