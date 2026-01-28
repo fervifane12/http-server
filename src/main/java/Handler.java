@@ -30,7 +30,7 @@ public class Handler implements Runnable{
                         .buildResponse();
             } else if (request.path().startsWith("/user-agent")) {
                 System.out.println(request);
-                System.out.println(request.getHeader("User-Agent"));
+                System.out.println(request.getHeader("user-agent"));
                 String userAgentValue = request.getHeader("user-agent").trim();
                 response = responseBuilder.withStatus("200", "OK")
                         .withHeaders("Content-Type", "text/plain")
