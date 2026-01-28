@@ -17,7 +17,7 @@ public class Handler implements Runnable{
         try (OutputStream out = clientSocket.getOutputStream();
             Socket socket = clientSocket) {
 
-            Request request = parser.parseRequest(clientSocket);
+            Request request = parser.parseRequest(socket);
             ResponseBuilder responseBuilder = new ResponseBuilder();
             Response response;
 
@@ -40,10 +40,10 @@ public class Handler implements Runnable{
             } else {
                 response = responseBuilder.withStatus("404", "Not Found")
                         .buildResponse();
-
-                out.write(response.toString().getBytes());
-                out.flush();
             }
+            
+            out.write(response.toString().getBytes());
+            out.flush();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
