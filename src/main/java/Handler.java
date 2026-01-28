@@ -28,11 +28,12 @@ public class Handler implements Runnable{
                         .withHeaders("Content-Length", String.valueOf(request.path().split("/")[1].length()))
                         .withBody(request.path().split("/")[1])
                         .buildResponse();
+                System.out.println(request.path().split("/")[1]);
             } else if (request.path().startsWith("/user-agent")) {
                 String userAgentValue = request.getHeader("user-agent").trim();
                 response = responseBuilder.withStatus("200", "OK")
                         .withHeaders("Content-Type", "text/plain")
-                        .withHeaders("Content-Length", String.valueOf(userAgentValue.length()))
+                        .withHeaders("Content-Length", String.valueOf(userAgentValue.getBytes(StandardCharsets.UTF_8).length))
                         .withBody(userAgentValue)
                         .buildResponse();
             } else if (request.path().equals("/")) {
