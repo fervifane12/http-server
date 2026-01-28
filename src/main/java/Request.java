@@ -5,6 +5,6 @@ public record Request(String httpMethod,
                       String httpVersion,
                       Map<String, String> headers) {
     public String getHeader(String key){
-        return headers.get(key);
+        return this.headers.get(key);
     }
 }
