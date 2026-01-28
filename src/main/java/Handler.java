@@ -14,10 +14,10 @@ public class Handler implements Runnable{
     @Override
     public void run() {
 
-        try (OutputStream out = clientSocket.getOutputStream();
-            Socket socket = clientSocket) {
+        try  {
+            OutputStream out = clientSocket.getOutputStream();
 
-            Request request = parser.parseRequest(socket);
+            Request request = parser.parseRequest(clientSocket);
             ResponseBuilder responseBuilder = new ResponseBuilder();
             Response response;
 
@@ -41,7 +41,7 @@ public class Handler implements Runnable{
                 response = responseBuilder.withStatus("404", "Not Found")
                         .buildResponse();
             }
-            
+
             out.write(response.toString().getBytes());
             out.flush();
         } catch (IOException e) {

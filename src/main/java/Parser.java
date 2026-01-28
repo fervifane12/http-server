@@ -13,8 +13,9 @@ public class Parser {
     }
 
     public Request parseRequest(Socket clientSocket) {
-        try(BufferedReader reader =
-                    new BufferedReader(new InputStreamReader(clientSocket.getInputStream()))) {
+        try {
+            BufferedReader reader =
+                    new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             String[] splitRequest = extractSplittedString(reader);
             String[] requestLine = splitRequest[0].split(" ");
             Map<String, String> headers = extractHeaders(splitRequest);
@@ -49,7 +50,7 @@ public class Parser {
                 int divIndex = splitRequest[i].indexOf(":");
                 if (divIndex>0){
                     String headerName = splitRequest[i].substring(0, divIndex).toLowerCase();
-                    String value = splitRequest[i].substring(divIndex + 1);
+                    String value = splitRequest[i].substring(divIndex + 1).trim();
                     headers.put(headerName, value);
                 }
             }
