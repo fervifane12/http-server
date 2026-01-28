@@ -25,10 +25,9 @@ public class Handler implements Runnable{
             if (request.path().startsWith("/echo")) {
                 response = responseBuilder.withStatus("200", "OK")
                         .withHeaders("Content-Type", "text/plain")
-                        .withHeaders("Content-Length", String.valueOf(request.path().split("/")[1].length()))
+                        .withHeaders("Content-Length", String.valueOf(request.path().split("/")[2].length()))
                         .withBody(request.path().split("/")[2])
                         .buildResponse();
-                System.out.println(request.path().split("/")[1]);
             } else if (request.path().startsWith("/user-agent")) {
                 String userAgentValue = request.getHeader("user-agent").trim();
                 response = responseBuilder.withStatus("200", "OK")
