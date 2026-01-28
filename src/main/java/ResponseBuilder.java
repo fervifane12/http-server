@@ -20,7 +20,6 @@ public class ResponseBuilder {
 
     public ResponseBuilder withHeaders(String key, String value) {
         headers.put(key, value);
-        System.out.println(key + ": " + value);
         return this;
     }
 

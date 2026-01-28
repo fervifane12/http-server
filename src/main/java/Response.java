@@ -18,22 +18,22 @@ public class Response {
 
     @Override
     public String toString() {
-        StringBuilder headers = new StringBuilder();
-        if (!headers.isEmpty()){
+        StringBuilder stringHeaders = new StringBuilder();
+        if (!this.headers.isEmpty()){
             for (Map.Entry<String, String> header : this.headers.entrySet()){
-                headers.append(header.getKey())
+                stringHeaders.append(header.getKey())
                         .append(": ")
                         .append(header.getValue())
                         .append("\r\n");
             }
         } else {
-            headers.append("\r\n");
+            stringHeaders.append("\r\n");
         }
 
         return  httpVersion + ' ' +
                 httpCode + ' ' +
                 httpCodeName + "\r\n" +
-                headers + "\r\n" +
+                stringHeaders + "\r\n" +
                 (body!=null ? body : "");
     }
 }

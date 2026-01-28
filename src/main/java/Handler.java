@@ -35,7 +35,6 @@ public class Handler implements Runnable{
                         .withHeaders("Content-Length", String.valueOf(userAgentValue.getBytes(StandardCharsets.UTF_8).length))
                         .withBody(userAgentValue)
                         .buildResponse();
-                System.out.println(response);
             } else if (request.path().equals("/")) {
                 response = responseBuilder.withStatus("200", "OK")
                         .buildResponse();
