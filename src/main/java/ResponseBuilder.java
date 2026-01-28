@@ -1,3 +1,4 @@
+import java.util.HashMap;
 import java.util.Map;
 
 public class ResponseBuilder {
@@ -5,7 +6,7 @@ public class ResponseBuilder {
     private String httpVersion = "HTTP/1.1";
     private String httpCode;
     private String httpCodeName;
-    private Map<String, String> headers;
+    private Map<String, String> headers = new HashMap<>();
     private String body;
 
     public ResponseBuilder() {
@@ -18,7 +19,7 @@ public class ResponseBuilder {
     }
 
     public ResponseBuilder withHeaders(String key, String value) {
-        this.headers.put(key, value);
+        headers.put(key, value);
         return this;
     }
 
@@ -32,7 +33,8 @@ public class ResponseBuilder {
                 httpVersion,
                 httpCode,
                 httpCodeName,
-                headers
+                headers,
+                body
         );
     }
 }

@@ -2,6 +2,7 @@
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 
 public class Handler implements Runnable{
     private final Socket clientSocket;
@@ -31,7 +32,7 @@ public class Handler implements Runnable{
                 String userAgentValue = request.getHeader("user-agent").trim();
                 response = responseBuilder.withStatus("200", "OK")
                         .withHeaders("Content-Type", "text/plain")
-                        .withHeaders("Content-Length", String.valueOf(userAgentValue.length()))
+                        .withHeaders("Content-Length", String.valueOf(userAgentValue.getBytes(StandardCharsets.UTF_8).length))
                         .withBody(userAgentValue)
                         .buildResponse();
             } else if (request.path().equals("/")) {
