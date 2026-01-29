@@ -9,6 +9,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.FileAttribute;
 import java.util.Arrays;
+import java.util.Objects;
 
 public class Handler implements Runnable{
     private final Socket clientSocket;
@@ -77,7 +78,7 @@ public class Handler implements Runnable{
                         .buildResponse();
             }
 
-            if (request.getHeader("accept-encoding").equals("gzip")) {
+            if (Objects.equals(request.getHeader("accept-encoding"), "gzip")) {
                 response = responseBuilder.withHeaders("Content-Encoding", "gzip")
                         .buildResponse();
             }
