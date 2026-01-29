@@ -30,6 +30,8 @@ public class Handler implements Runnable{
             ResponseBuilder responseBuilder = new ResponseBuilder();
             Response response;
 
+
+
             if (request.path().startsWith("/echo")) {
                 response = responseBuilder.withStatus("200", "OK")
                         .withHeaders("Content-Type", "text/plain")
@@ -72,6 +74,11 @@ public class Handler implements Runnable{
 
             } else {
                 response = responseBuilder.withStatus("404", "Not Found")
+                        .buildResponse();
+            }
+
+            if (request.getHeader("content-encoding").equals("gzip")) {
+                response = responseBuilder.withHeaders("Content-Encoding", "gzip")
                         .buildResponse();
             }
 
