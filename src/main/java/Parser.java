@@ -24,7 +24,9 @@ public class Parser {
             String httpVersion = requestLine[2];
 
             int contentLength = Integer.parseInt(headers.get("content-length"));
+            System.out.println(contentLength);
             char[] bodyChars = new char[contentLength];
+
             reader.read(bodyChars, 0, contentLength);
             String body = new String(bodyChars);
 
