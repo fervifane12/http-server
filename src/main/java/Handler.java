@@ -47,7 +47,7 @@ public class Handler implements Runnable{
                 response = responseBuilder.withStatus("200", "OK")
                         .buildResponse();
             } else if (request.path().startsWith("/files") && request.httpMethod().equals("GET")) {
-                String fileName = request.path().substring("/files".length());
+                String fileName = request.path().substring("/files/".length());
                 Path filePath = Paths.get(baseDirectory, fileName);
 
                 if (Files.exists(filePath) && Files.isRegularFile(filePath)) {

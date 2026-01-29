@@ -22,14 +22,17 @@ public class Parser {
             String httpMethod = requestLine[0];
             String path= requestLine[1];
             String httpVersion = requestLine[2];
+            String body;
 
-            int contentLength = Integer.parseInt(headers.get("content-length"));
-            System.out.println(contentLength);
-            char[] bodyChars = new char[contentLength];
-
-            reader.read(bodyChars, 0, contentLength);
-            String body = new String(bodyChars);
-
+            if (headers.containsKey("content-length")) {
+                int contentLength = Integer.parseInt(headers.get("content-length"));
+                char[] bodyChars = new char[contentLength];
+                reader.read(bodyChars, 0, contentLength);
+                body = new String(bodyChars);
+            } else {
+                body = "";
+            }
+            
             return new Request(httpMethod,
                     path,
                     httpVersion,
