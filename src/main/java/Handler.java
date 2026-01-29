@@ -82,6 +82,8 @@ public class Handler implements Runnable{
                 }
                 String responseBody = buffer.toString(StandardCharsets.UTF_8);
 
+                System.out.println(responseBody);
+
                 response = responseBuilder.withHeaders("Content-Encoding", "gzip")
                         .withBody(responseBody)
                         .buildResponse();
