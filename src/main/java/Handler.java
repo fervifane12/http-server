@@ -10,6 +10,7 @@ import java.nio.file.Paths;
 import java.nio.file.attribute.FileAttribute;
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.Optional;
 
 public class Handler implements Runnable{
     private final Socket clientSocket;
@@ -78,7 +79,7 @@ public class Handler implements Runnable{
                         .buildResponse();
             }
 
-            if (request.getHeader("accept-encoding").contains("gzip")) {
+            if (Optional.of(request.getHeader("accept-encoding").contains("gzip")).orElse(false)) {
                 response = responseBuilder.withHeaders("Content-Encoding", "gzip")
                         .buildResponse();
             }
