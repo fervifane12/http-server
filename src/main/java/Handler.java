@@ -74,6 +74,7 @@ public class Handler implements Runnable{
             }
 
             if (request.getHeader("accept-encoding").contains("gzip")) {
+                System.out.println(request.body());
                 byte[] bodyBytes = request.body() == null? new byte[0] : request.body().getBytes(StandardCharsets.UTF_8);
 
                 ByteArrayOutputStream buffer = new ByteArrayOutputStream();
