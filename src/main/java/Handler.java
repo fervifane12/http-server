@@ -1,5 +1,4 @@
-
-import java.io.File;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.Socket;
@@ -7,10 +6,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.attribute.FileAttribute;
-import java.util.Arrays;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.zip.GZIPOutputStream;
 
 public class Handler implements Runnable{
     private final Socket clientSocket;
@@ -31,8 +27,6 @@ public class Handler implements Runnable{
             Request request = parser.parseRequest(clientSocket);
             ResponseBuilder responseBuilder = new ResponseBuilder();
             Response response;
-
-
 
             if (request.path().startsWith("/echo")) {
                 response = responseBuilder.withStatus("200", "OK")
@@ -80,7 +74,16 @@ public class Handler implements Runnable{
             }
 
             if (request.getHeader("accept-encoding").contains("gzip")) {
+                byte[] bodyBytes = request.body() == null? new byte[0] : request.body().getBytes(StandardCharsets.UTF_8);
+
+                ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+                try(GZIPOutputStream gzipOut = new GZIPOutputStream(buffer)) {
+                    gzipOut.write(bodyBytes);
+                }
+                String responseBody = buffer.toString(StandardCharsets.UTF_8);
+
                 response = responseBuilder.withHeaders("Content-Encoding", "gzip")
+                        .withBody(responseBody)
                         .buildResponse();
             }
 
