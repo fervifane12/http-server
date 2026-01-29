@@ -78,7 +78,7 @@ public class Handler implements Runnable{
                         .buildResponse();
             }
 
-            if (Objects.equals(request.getHeader("accept-encoding"), "gzip")) {
+            if (request.getHeader("accept-encoding").contains("gzip")) {
                 response = responseBuilder.withHeaders("Content-Encoding", "gzip")
                         .buildResponse();
             }
