@@ -3,13 +3,19 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
 
 public class Handler implements Runnable{
     private final Socket clientSocket;
+    private final String baseDirectory;
     private final Parser parser = new Parser();
 
-    public Handler(Socket clientSocket) {
+    public Handler(Socket clientSocket, String baseDirectory) {
         this.clientSocket = clientSocket;
+        this.baseDirectory = baseDirectory;
     }
 
     @Override
@@ -38,11 +44,27 @@ public class Handler implements Runnable{
             } else if (request.path().equals("/")) {
                 response = responseBuilder.withStatus("200", "OK")
                         .buildResponse();
+            } else if (request.path().startsWith("/files")) {
+                String fileName = request.path().substring("/files".length());
+                Path filePath = Paths.get(baseDirectory, fileName);
+
+                if (Files.exists(filePath) && Files.isRegularFile(filePath)) {
+                    byte[] fileContent = Files.readAllBytes(filePath);
+                    response = responseBuilder.withStatus("200", "OK")
+                            .withHeaders("Content-Type", "application/octet-stream")
+                            .withHeaders("Content-Length", String.valueOf(fileContent.length))
+                            .withBody(new String(fileContent, StandardCharsets.UTF_8))
+                            .buildResponse();
+                } else {
+                    response = responseBuilder.withStatus("404", "Not Found")
+                            .buildResponse();
+                }
             } else {
                 response = responseBuilder.withStatus("404", "Not Found")
                         .buildResponse();
             }
 
+            assert response != null;
             out.write(response.toString().getBytes());
             out.flush();
         } catch (IOException e) {
