@@ -48,6 +48,7 @@ public class Parser {
         while ((line = reader.readLine())!=null && !line.isEmpty()){
             requestString.append(line).append("\r\n");
         }
+        System.out.println("BODY: \r\n"+reader.readLine() + "\r\nEND");
 
         return requestString.toString().split("\\r\\n");
     }

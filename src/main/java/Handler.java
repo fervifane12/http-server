@@ -74,7 +74,7 @@ public class Handler implements Runnable{
             }
 
             if (request.getHeader("accept-encoding").contains("gzip")) {
-                System.out.println(request.body());
+//                System.out.println(request.body());
                 byte[] bodyBytes = request.body() == null? new byte[0] : request.body().getBytes(StandardCharsets.UTF_8);
 
                 ByteArrayOutputStream buffer = new ByteArrayOutputStream();
@@ -83,13 +83,12 @@ public class Handler implements Runnable{
                 }
                 String responseBody = buffer.toString(StandardCharsets.UTF_8);
 
-                System.out.println(responseBody);
-                ;
+//                System.out.println(responseBody);
 
                 response = responseBuilder.withHeaders("Content-Encoding", "gzip")
                         .withBody(responseBody)
                         .buildResponse();
-                System.out.println(response.toString());
+//                System.out.println(response.toString());
             }
 
             assert response != null;
