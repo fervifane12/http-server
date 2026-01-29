@@ -1,4 +1,5 @@
 import java.util.Map;
+import java.util.Optional;
 
 public record Request(String httpMethod,
                       String path,
@@ -6,7 +7,6 @@ public record Request(String httpMethod,
                       Map<String, String> headers,
                       String body) {
     public String getHeader(String key){
-        assert headers.get(key) != null;
-        return headers.get(key);
+        return Optional.ofNullable(headers.get(key)).orElse("");
     }
 }
