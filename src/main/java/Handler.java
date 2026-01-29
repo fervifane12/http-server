@@ -1,4 +1,5 @@
 
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.Socket;
@@ -6,6 +7,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.attribute.FileAttribute;
 import java.util.Arrays;
 
 public class Handler implements Runnable{
@@ -44,8 +46,8 @@ public class Handler implements Runnable{
             } else if (request.path().equals("/")) {
                 response = responseBuilder.withStatus("200", "OK")
                         .buildResponse();
-            } else if (request.path().startsWith("/files")) {
-                String fileName = request.path().substring("/files".length());
+            } else if (request.path().startsWith("/files") && request.httpMethod().equals("GET")) {
+                String fileName = request.path().substring("/files/".length());
                 Path filePath = Paths.get(baseDirectory, fileName);
 
                 if (Files.exists(filePath) && Files.isRegularFile(filePath)) {
@@ -59,6 +61,15 @@ public class Handler implements Runnable{
                     response = responseBuilder.withStatus("404", "Not Found")
                             .buildResponse();
                 }
+            } else if (request.httpMethod().equals("POST") && request.path().startsWith("/files")) {
+                String fileName = request.path().substring("/files/".length());
+                Path filePath = Paths.get(baseDirectory, fileName);
+
+                Files.createDirectories(Paths.get(baseDirectory));
+                Files.writeString(filePath, request.body());
+                response = responseBuilder.withStatus("201", "Created")
+                        .buildResponse();
+
             } else {
                 response = responseBuilder.withStatus("404", "Not Found")
                         .buildResponse();

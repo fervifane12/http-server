@@ -23,10 +23,16 @@ public class Parser {
             String path= requestLine[1];
             String httpVersion = requestLine[2];
 
+            int contentLength = Integer.parseInt(headers.get("content-length"));
+            char[] bodyChars = new char[contentLength];
+            reader.read(bodyChars, 0, contentLength);
+            String body = new String(bodyChars);
+
             return new Request(httpMethod,
                     path,
                     httpVersion,
-                    headers);
+                    headers,
+                    body);
 
         } catch (IOException e) {
             throw new RuntimeException(e);
