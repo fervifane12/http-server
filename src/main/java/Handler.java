@@ -24,6 +24,7 @@ public class Handler implements Runnable{
 
             while (true){
                 Request request = parser.parseRequest(clientSocket);
+                if (request == null) {break;}
                 Response response;
                 ResponseBuilder responseBuilder = new ResponseBuilder();
                 boolean usesGzip = request.getHeader("accept-encoding").contains("gzip");
