@@ -1,9 +1,12 @@
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.zip.GZIPOutputStream;
 
 public class Parser {
 
@@ -48,7 +51,6 @@ public class Parser {
         while ((line = reader.readLine())!=null && !line.isEmpty()){
             requestString.append(line).append("\r\n");
         }
-        System.out.println("BODY: \r\n"+reader.readLine() + "\r\nEND");
 
         return requestString.toString().split("\\r\\n");
     }
@@ -66,6 +68,15 @@ public class Parser {
             }
         }
         return headers;
+    }
+
+    public byte[] gzipCompress(String toGzip) throws IOException {
+        byte[] responseBytes = toGzip.getBytes(StandardCharsets.UTF_8);
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        try(GZIPOutputStream gzipOut = new GZIPOutputStream(buffer)) {
+            gzipOut.write(responseBytes);
+        }
+        return  buffer.toByteArray();
     }
 
 

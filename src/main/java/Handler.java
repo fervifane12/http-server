@@ -6,6 +6,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.zip.GZIPOutputStream;
 
 public class Handler implements Runnable{
@@ -28,12 +29,29 @@ public class Handler implements Runnable{
             ResponseBuilder responseBuilder = new ResponseBuilder();
             Response response;
 
+            boolean usesGzip = request.getHeader("accept-encoding").contains("gzip");
+
             if (request.path().startsWith("/echo")) {
-                response = responseBuilder.withStatus("200", "OK")
-                        .withHeaders("Content-Type", "text/plain")
-                        .withHeaders("Content-Length", String.valueOf(request.path().split("/")[2].length()))
-                        .withBody(request.path().split("/")[2])
-                        .buildResponse();
+                if(usesGzip){
+
+                    byte[] echoText = parser.gzipCompress(request.path().substring("/echo/".length()));
+
+                    response = responseBuilder.withStatus("200", "OK")
+                            .withHeaders("Content-Encoding", "gzip")
+                            .withHeaders("Content-Type", "text/plain")
+                            .withHeaders("Content-Length", String.valueOf(echoText.length))
+                            .buildResponse();
+                    out.write(response.toString().getBytes(StandardCharsets.UTF_8));
+                    out.write(echoText);
+                    out.flush();
+                }else {
+                    response = responseBuilder.withStatus("200", "OK")
+                            .withHeaders("Content-Type", "text/plain")
+                            .withHeaders("Content-Length", String.valueOf(request.path().split("/")[2].length()))
+                            .withBody(request.path().split("/")[2])
+                            .buildResponse();
+                }
+
             } else if (request.path().startsWith("/user-agent")) {
                 String userAgentValue = request.getHeader("user-agent").trim();
                 response = responseBuilder.withStatus("200", "OK")
@@ -73,23 +91,10 @@ public class Handler implements Runnable{
                         .buildResponse();
             }
 
-            if (request.getHeader("accept-encoding").contains("gzip")) {
-                System.out.println(request.body());
-                byte[] bodyBytes = request.body() == null? new byte[0] : request.body().getBytes(StandardCharsets.UTF_8);
-
-                ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-                try(GZIPOutputStream gzipOut = new GZIPOutputStream(buffer)) {
-                    gzipOut.write(bodyBytes);
-                }
-                String responseBody = buffer.toString(StandardCharsets.UTF_8);
-
-                System.out.println(responseBody);
-                ;
-
-                response = responseBuilder.withHeaders("Content-Encoding", "gzip")
-                        .withBody(responseBody)
+            if (usesGzip && !response.toString().contains("Content-Encoding")) {
+                response= responseBuilder.withHeaders("Content-Encoding", "gzip")
                         .buildResponse();
-                System.out.println(response.toString());
+
             }
 
             assert response != null;

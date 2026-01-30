@@ -14,7 +14,6 @@ public class Response {
         this.headers = headers;
         this.body = body;
     }
-
     @Override
     public String toString() {
         StringBuilder stringHeaders = new StringBuilder();
