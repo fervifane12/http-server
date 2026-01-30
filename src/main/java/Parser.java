@@ -18,6 +18,9 @@ public class Parser {
             BufferedReader reader =
                     new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             String[] splitRequest = extractSplittedString(reader);
+            if (splitRequest.length == 0 || splitRequest[0].isBlank()) {
+                return null;
+            }
             String[] requestLine = splitRequest[0].split(" ");
             Map<String, String> headers = extractHeaders(splitRequest);
             String httpMethod = requestLine[0];

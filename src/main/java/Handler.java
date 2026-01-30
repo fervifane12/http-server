@@ -21,7 +21,7 @@ public class Handler implements Runnable{
 
         try  {
             OutputStream out = clientSocket.getOutputStream();
-            
+
             while (true){
                 Request request = parser.parseRequest(clientSocket);
                 Response response;
@@ -95,14 +95,18 @@ public class Handler implements Runnable{
                 }
 
                 assert response != null;
-                out.write(response.toString().getBytes());
-                out.flush();
 
                 String connection = request.getHeader("connection");
                 if (connection != null && connection.equals("close")) {
-                    System.out.println(response);
+                    response = responseBuilder.withHeaders("Connection", "close")
+                                    .buildResponse();
+                    out.write(response.toString().getBytes());
+                    out.flush();
                     break;
                 }
+                out.write(response.toString().getBytes());
+                out.flush();
+
             }
             clientSocket.close();
         } catch (IOException e) {
