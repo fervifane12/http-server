@@ -21,12 +21,11 @@ public class Handler implements Runnable{
 
         try  {
             OutputStream out = clientSocket.getOutputStream();
-
-            Request request = parser.parseRequest(clientSocket);
-            ResponseBuilder responseBuilder = new ResponseBuilder();
-            Response response;
-
+            
             while (true){
+                Request request = parser.parseRequest(clientSocket);
+                Response response;
+                ResponseBuilder responseBuilder = new ResponseBuilder();
                 boolean usesGzip = request.getHeader("accept-encoding").contains("gzip");
 
                 if (request.path().startsWith("/echo")) {
