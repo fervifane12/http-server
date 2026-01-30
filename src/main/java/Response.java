@@ -16,22 +16,28 @@ public class Response {
     }
     @Override
     public String toString() {
-        StringBuilder stringHeaders = new StringBuilder();
-        if (!this.headers.isEmpty()){
-            for (Map.Entry<String, String> header : this.headers.entrySet()){
-                stringHeaders.append(header.getKey())
-                        .append(": ")
-                        .append(header.getValue())
-                        .append("\r\n");
-            }
-        } else {
-            stringHeaders.append("\r\n");
+        StringBuilder sb = new StringBuilder();
+
+        sb.append(httpVersion)
+                .append(' ')
+                .append(httpCode)
+                .append(' ')
+                .append(httpCodeName)
+                .append("\r\n");
+
+        for (Map.Entry<String, String> header : headers.entrySet()) {
+            sb.append(header.getKey())
+                    .append(": ")
+                    .append(header.getValue())
+                    .append("\r\n");
         }
 
-        return  httpVersion + ' ' +
-                httpCode + ' ' +
-                httpCodeName + "\r\n" +
-                stringHeaders + "\r\n" +
-                (body!=null ? body : "");
+        sb.append("\r\n");
+
+        if (body != null) {
+            sb.append(body);
+        }
+
+        return sb.toString();
     }
 }
